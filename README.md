@@ -1,8 +1,8 @@
-# RDF Quad
+# RDF String
 
-[![Build Status](https://travis-ci.org/rubensworks/rdf-term.js.svg?branch=master)](https://travis-ci.org/rubensworks/rdf-term.js)
-[![Coverage Status](https://coveralls.io/repos/github/rubensworks/rdf-term.js/badge.svg?branch=master)](https://coveralls.io/github/rubensworks/rdf-term.js?branch=master)
-[![npm version](https://badge.fury.io/js/rdf-term.svg)](https://www.npmjs.com/package/rdf-term)
+[![Build Status](https://travis-ci.org/rubensworks/rdf-string.js.svg?branch=master)](https://travis-ci.org/rubensworks/rdf-string.js)
+[![Coverage Status](https://coveralls.io/repos/github/rubensworks/rdf-string.js/badge.svg?branch=master)](https://coveralls.io/github/rubensworks/rdf-string.js?branch=master)
+[![npm version](https://badge.fury.io/js/rdf-string.svg)](https://www.npmjs.com/package/rdf-string)
 
 This package contains utility functions to convert between the string-based
 and [RDFJS](https://github.com/rdfjs/representation-task-force/) representations of RDF terms, quads and triples.
@@ -17,7 +17,7 @@ This string-based representation is based on the
 The following examples assume the following imports:
 ```javascript
 import * as RdfDataModel from "rdf-data-model";
-import * as RdfTerm from "rdf-term";
+import * as RdfTerm from "rdf-string";
 ```
 
 ### Term to string
