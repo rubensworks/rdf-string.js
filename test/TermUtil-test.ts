@@ -1,4 +1,5 @@
 import {blankNode, defaultGraph, literal, namedNode, quad, triple, variable} from "rdf-data-model";
+import * as DataFactory from "rdf-data-model";
 import * as TermUtil from "../index";
 
 describe('TermUtil', () => {
@@ -97,6 +98,51 @@ describe('TermUtil', () => {
     it('should transform a named node', async () => {
       return expect(TermUtil.stringToTerm('http://example.org')).toEqual(namedNode('http://example.org'));
     });
+
+    describe('with a custom data factory', () => {
+      it('should transform an empty string to default graph', async () => {
+        return expect(TermUtil.stringToTerm('', DataFactory)).toEqual(defaultGraph());
+      });
+
+      it('should transform a blank node', async () => {
+        return expect(TermUtil.stringToTerm('_:b1', DataFactory)).toEqual(blankNode('b1'));
+      });
+
+      it('should transform a variable', async () => {
+        return expect(TermUtil.stringToTerm('?v1', DataFactory)).toEqual(variable('v1'));
+      });
+
+      it('should transform a literal', async () => {
+        return expect(TermUtil.stringToTerm('"abc"', DataFactory).equals(literal('abc'))).toBeTruthy();
+      });
+
+      it('should transform a literal with a datatype', async () => {
+        return expect(TermUtil.stringToTerm('"abc"^^http://blabla', DataFactory)
+          .equals(literal('abc', namedNode('http://blabla')))).toBeTruthy();
+      });
+
+      it('should transform a literal with a datatype incorrectly', async () => {
+        return expect(TermUtil.stringToTerm('"abc"^^http://blabla', DataFactory)
+          .equals(literal('abc'))).toBeFalsy();
+      });
+
+      it('should transform a literal with a language', async () => {
+        return expect(TermUtil.stringToTerm('"abc"@en', DataFactory).equals(literal('abc', 'en'))).toBeTruthy();
+      });
+
+      it('should transform a literal with a language incorrectly', async () => {
+        return expect(TermUtil.stringToTerm('"abc"@en', DataFactory).equals(literal('abc'))).toBeFalsy();
+      });
+
+      it('should transform a default graph', async () => {
+        return expect(TermUtil.stringToTerm('', DataFactory)).toEqual(defaultGraph());
+      });
+
+      it('should transform a named node', async () => {
+        return expect(TermUtil.stringToTerm('http://example.org', DataFactory))
+          .toEqual(namedNode('http://example.org'));
+      });
+    });
   });
 
   describe('#stringQuadToQuad', () => {
@@ -124,6 +170,34 @@ describe('TermUtil', () => {
         literal('literal'),
         namedNode('http://example.org/graph'),
       ))).toBeTruthy();
+    });
+
+    describe('with a custom data factory', () => {
+      it('should transform a string triple to a triple', async () => {
+        return expect(TermUtil.stringQuadToQuad({
+          object: '"literal"',
+          predicate: 'http://example.org/p',
+          subject: 'http://example.org',
+        }, DataFactory).equals(triple(
+          namedNode('http://example.org'),
+          namedNode('http://example.org/p'),
+          literal('literal'),
+        ))).toBeTruthy();
+      });
+
+      it('should transform a string quad to a quad', async () => {
+        return expect(TermUtil.stringQuadToQuad({
+          graph: 'http://example.org/graph',
+          object: '"literal"',
+          predicate: 'http://example.org/p',
+          subject: 'http://example.org',
+        }, DataFactory).equals(quad(
+          namedNode('http://example.org'),
+          namedNode('http://example.org/p'),
+          literal('literal'),
+          namedNode('http://example.org/graph'),
+        ))).toBeTruthy();
+      });
     });
   });
 

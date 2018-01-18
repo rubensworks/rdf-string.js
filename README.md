@@ -51,6 +51,8 @@ console.log(RdfTerm.termToString(RdfDataModel.defaultGraph()));
 
 Convert an string-based term to the RDFJS representation.
 
+_Optionally, a custom RDFJS DataFactory can be provided as second argument to create terms instead of the built-in DataFactory._
+
 ```javascript
 // Outputs a named node
 RdfTerm.stringToTerm('http://example.org');
@@ -90,6 +92,8 @@ console.log(RdfTerm.quadToStringQuad(RdfDataModel.triple(
 ### String-based quad to quad
 
 Converts a string-based quad to an RDFJS quad.
+
+_Optionally, a custom RDFJS DataFactory can be provided as second argument to create quads and terms instead of the built-in DataFactory._
 
 ```javascript
 // Outputs a quad

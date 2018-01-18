@@ -1,4 +1,4 @@
-import {blankNode, defaultGraph, literal, namedNode, quad, variable} from "rdf-data-model";
+import * as DataFactory from "rdf-data-model";
 import * as RDF from "rdf-js";
 
 /**
@@ -82,20 +82,22 @@ export function getLiteralLanguage(literalValue: string): string {
 /**
  * Transform a string-based RDF term to an RDFJS term.
  * @param {string} value A string-based RDF-term.
+ * @param {RDF.DataFactory} dataFactory An optional datafactory to create terms with.
  * @return {RDF.Term} An RDF-JS term.
  */
-export function stringToTerm(value: string): RDF.Term {
+export function stringToTerm(value: string, dataFactory?: RDF.DataFactory): RDF.Term {
+  dataFactory = dataFactory || DataFactory;
   if (!value || !value.length) {
-    return defaultGraph();
+    return dataFactory.defaultGraph();
   }
   switch (value[0]) {
-  case '_': return blankNode(value.substr(2));
-  case '?': return variable(value.substr(1));
+  case '_': return dataFactory.blankNode(value.substr(2));
+  case '?': return dataFactory.variable(value.substr(1));
   case '"':
     const language: string = getLiteralLanguage(value);
-    const type: RDF.NamedNode = namedNode(getLiteralType(value));
-    return literal(getLiteralValue(value), language || type);
-  default:  return namedNode(value);
+    const type: RDF.NamedNode = dataFactory.namedNode(getLiteralType(value));
+    return dataFactory.literal(getLiteralValue(value), language || type);
+  default:  return dataFactory.namedNode(value);
   }
 }
 
@@ -116,14 +118,16 @@ export function quadToStringQuad(q: RDF.Quad): IStringQuad {
 /**
  * Convert a string-based quad representation to an RDFJS quad.
  * @param {IStringQuad} stringQuad A hash with string-based quad terms.
+ * @param {RDF.DataFactory} dataFactory An optional datafactory to create terms with.
  * @return {Quad} An RDFJS quad.
  */
-export function stringQuadToQuad(stringQuad: IStringQuad): RDF.Quad {
-  return quad(
-    stringToTerm(stringQuad.subject),
-    stringToTerm(stringQuad.predicate),
-    stringToTerm(stringQuad.object),
-    stringToTerm(stringQuad.graph),
+export function stringQuadToQuad(stringQuad: IStringQuad, dataFactory?: RDF.DataFactory): RDF.Quad {
+  dataFactory = dataFactory || DataFactory;
+  return dataFactory.quad(
+    stringToTerm(stringQuad.subject, dataFactory),
+    stringToTerm(stringQuad.predicate, dataFactory),
+    stringToTerm(stringQuad.object, dataFactory),
+    stringToTerm(stringQuad.graph, dataFactory),
   );
 }
 
