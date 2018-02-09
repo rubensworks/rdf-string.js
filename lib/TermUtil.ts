@@ -107,12 +107,14 @@ export function stringToTerm(value: string, dataFactory?: RDF.DataFactory): RDF.
  * @return {IStringQuad} A hash with string-based quad terms.
  */
 export function quadToStringQuad(q: RDF.Quad): IStringQuad {
+  // tslint:disable:object-literal-sort-keys
   return {
-    graph: termToString(q.graph),
-    object: termToString(q.object),
-    predicate: termToString(q.predicate),
     subject: termToString(q.subject),
+    predicate: termToString(q.predicate),
+    object: termToString(q.object),
+    graph: termToString(q.graph),
   };
+  // tslint:enable:object-literal-sort-keys
 }
 
 /**
