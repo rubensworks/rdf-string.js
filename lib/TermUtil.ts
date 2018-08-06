@@ -1,4 +1,4 @@
-import * as DataFactory from "rdf-data-model";
+import * as DataFactory from "@rdfjs/data-model";
 import * as RDF from "rdf-js";
 
 /**

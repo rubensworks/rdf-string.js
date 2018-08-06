@@ -1,5 +1,5 @@
-import {blankNode, defaultGraph, literal, namedNode, quad, triple, variable} from "rdf-data-model";
-import * as DataFactory from "rdf-data-model";
+import {blankNode, defaultGraph, literal, namedNode, quad, triple, variable} from "@rdfjs/data-model";
+import * as DataFactory from "@rdfjs/data-model";
 import * as TermUtil from "../index";
 
 describe('TermUtil', () => {
