@@ -17,7 +17,7 @@ This string-based representation is based on the
 The following examples assume the following imports:
 ```javascript
 import * as RdfDataModel from "rdf-data-model";
-import * as RdfTerm from "rdf-string";
+import * as RdfString from "rdf-string";
 ```
 
 ### Term to string
@@ -26,25 +26,25 @@ Convert an RDFJS term to the string-based representation.
 
 ```javascript
 // Prints http://example.org
-console.log(RdfTerm.termToString(RdfDataModel.namedNode('http://example.org')));
+console.log(RdfString.termToString(RdfDataModel.namedNode('http://example.org')));
 
 // Prints _:b1
-console.log(RdfTerm.termToString(RdfDataModel.blankNode('b1')));
+console.log(RdfString.termToString(RdfDataModel.blankNode('b1')));
 
 // Prints "abc"
-console.log(RdfTerm.termToString(RdfDataModel.literal('abc')));
+console.log(RdfString.termToString(RdfDataModel.literal('abc')));
 
 // Prints "abc"@en-us
-console.log(RdfTerm.termToString(RdfDataModel.literal('abc', 'en-us')));
+console.log(RdfString.termToString(RdfDataModel.literal('abc', 'en-us')));
 
 // Prints "abc"^^http://example.org/
-console.log(RdfTerm.termToString(RdfDataModel.literal('abc', namedNode('http://example.org/'))));
+console.log(RdfString.termToString(RdfDataModel.literal('abc', namedNode('http://example.org/'))));
 
 // Prints ?v1
-console.log(RdfTerm.termToString(RdfDataModel.variable('v1')));
+console.log(RdfString.termToString(RdfDataModel.variable('v1')));
 
 // Prints empty string
-console.log(RdfTerm.termToString(RdfDataModel.defaultGraph()));
+console.log(RdfString.termToString(RdfDataModel.defaultGraph()));
 ```
 
 ### String to term
@@ -55,25 +55,25 @@ _Optionally, a custom RDFJS DataFactory can be provided as second argument to cr
 
 ```javascript
 // Outputs a named node
-RdfTerm.stringToTerm('http://example.org');
+RdfString.stringToTerm('http://example.org');
 
 // Outputs a blank node
-RdfTerm.stringToTerm('_:b1');
+RdfString.stringToTerm('_:b1');
 
 // Outputs a literal
-RdfTerm.stringToTerm('"abc"');
+RdfString.stringToTerm('"abc"');
 
 // Outputs a literal with a language tag
-RdfTerm.stringToTerm('"abc"@en-us');
+RdfString.stringToTerm('"abc"@en-us');
 
 // Outputs a literal with a datatype
-RdfTerm.stringToTerm('"abc"^^http://example.org/');
+RdfString.stringToTerm('"abc"^^http://example.org/');
 
 // Outputs a variable
-RdfTerm.stringToTerm('?v1');
+RdfString.stringToTerm('?v1');
 
 // Outputs a default graph
-RdfTerm.stringToTerm('');
+RdfString.stringToTerm('');
 ```
 
 ### Quad to string-based quad
@@ -82,7 +82,7 @@ Convert an RDFJS quad to a string-based quad.
 
 ```javascript
 // Prints { subject: 'http://example.org', predicate: 'http://example.org', object: '"abc"', graph: '' }
-console.log(RdfTerm.quadToStringQuad(RdfDataModel.triple(
+console.log(RdfString.quadToStringQuad(RdfDataModel.triple(
   namedNode('http://example.org'),
   namedNode('http://example.org'),
   literal('abc'),
@@ -97,7 +97,7 @@ _Optionally, a custom RDFJS DataFactory can be provided as second argument to cr
 
 ```javascript
 // Outputs a quad
-RdfTerm.stringQuadToQuad({
+RdfString.stringQuadToQuad({
   subject: 'http://example.org',
   predicate: 'http://example.org',
   object: '"abc"',
