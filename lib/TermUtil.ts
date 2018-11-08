@@ -1,6 +1,5 @@
 import * as DataFactory from "@rdfjs/data-model";
 import * as RDF from "rdf-js";
-import {BaseQuad} from "rdf-js";
 
 /**
  * Utility methods for converting between string-based RDF representations and RDFJS objects.
@@ -106,8 +105,9 @@ export function stringToTerm(value: string, dataFactory?: RDF.DataFactory): RDF.
  * Convert an RDFJS quad to a string-based quad representation.
  * @param {Quad} q An RDFJS quad.
  * @return {IStringQuad} A hash with string-based quad terms.
+ * @template Q The type of quad, defaults to RDF.Quad.
  */
-export function quadToStringQuad(q: RDF.Quad): IStringQuad {
+export function quadToStringQuad<Q extends RDF.BaseQuad = RDF.Quad>(q: Q): IStringQuad {
   // tslint:disable:object-literal-sort-keys
   return {
     subject: termToString(q.subject),
