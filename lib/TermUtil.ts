@@ -1,5 +1,6 @@
 import * as DataFactory from "@rdfjs/data-model";
 import * as RDF from "rdf-js";
+import {BaseQuad} from "rdf-js";
 
 /**
  * Utility methods for converting between string-based RDF representations and RDFJS objects.
@@ -121,11 +122,13 @@ export function quadToStringQuad(q: RDF.Quad): IStringQuad {
  * Convert a string-based quad representation to an RDFJS quad.
  * @param {IStringQuad} stringQuad A hash with string-based quad terms.
  * @param {RDF.DataFactory} dataFactory An optional datafactory to create terms with.
- * @return {Quad} An RDFJS quad.
+ * @return {Q} An RDFJS quad.
+ * @template Q The type of quad, defaults to RDF.Quad.
  */
-export function stringQuadToQuad(stringQuad: IStringQuad, dataFactory?: RDF.DataFactory): RDF.Quad {
+export function stringQuadToQuad<Q extends RDF.BaseQuad = RDF.Quad>(stringQuad: IStringQuad,
+                                                                    dataFactory?: RDF.DataFactory): Q {
   dataFactory = dataFactory || DataFactory;
-  return dataFactory.quad(
+  return dataFactory.quad<Q>(
     stringToTerm(stringQuad.subject, dataFactory),
     stringToTerm(stringQuad.predicate, dataFactory),
     stringToTerm(stringQuad.object, dataFactory),
