@@ -10,7 +10,7 @@ describe('TermUtil', () => {
     });
 
     it('should transform a named node', async () => {
-      return expect(TermUtil.termToString(namedNode('http://example.org'))).toEqual('http://example.org');
+      return expect(TermUtil.termToString(namedNode('http://example.org'))).toEqual('<http://example.org>');
     });
 
     it('should transform a blank node', async () => {
@@ -34,7 +34,7 @@ describe('TermUtil', () => {
     });
 
     it('should transform a literal with a datatype', async () => {
-      return expect(TermUtil.termToString(literal('abc', namedNode('http://ex')))).toEqual('"abc"^^http://ex');
+      return expect(TermUtil.termToString(literal('abc', namedNode('http://ex')))).toEqual('"abc"^^<http://ex>');
     });
   });
 
@@ -96,7 +96,7 @@ describe('TermUtil', () => {
     });
 
     it('should transform a named node', async () => {
-      return expect(TermUtil.stringToTerm('http://example.org')).toEqual(namedNode('http://example.org'));
+      return expect(TermUtil.stringToTerm('<http://example.org>')).toEqual(namedNode('http://example.org'));
     });
 
     describe('with a custom data factory', () => {
@@ -125,7 +125,7 @@ describe('TermUtil', () => {
         return expect(TermUtil.stringToTerm('"abc"^^http://blabla', DataFactory)
           .equals(literal('abc'))).toBeFalsy();
       });
-
+ 
       it('should transform a literal with a language', async () => {
         return expect(TermUtil.stringToTerm('"abc"@en', DataFactory).equals(literal('abc', 'en'))).toBeTruthy();
       });
@@ -139,7 +139,7 @@ describe('TermUtil', () => {
       });
 
       it('should transform a named node', async () => {
-        return expect(TermUtil.stringToTerm('http://example.org', DataFactory))
+        return expect(TermUtil.stringToTerm('<http://example.org>', DataFactory))
           .toEqual(namedNode('http://example.org'));
       });
     });
@@ -147,10 +147,15 @@ describe('TermUtil', () => {
 
   describe('#stringQuadToQuad', () => {
     it('should transform a string triple to a triple', async () => {
+      console.log(TermUtil.stringQuadToQuad({
+        object: '"literal"',
+        predicate: '<http://example.org/p>',
+        subject: '<http://example.org>',
+      }));
       return expect(TermUtil.stringQuadToQuad({
         object: '"literal"',
-        predicate: 'http://example.org/p',
-        subject: 'http://example.org',
+        predicate: '<http://example.org/p>',
+        subject: '<http://example.org>',
       }).equals(triple(
         namedNode('http://example.org'),
         namedNode('http://example.org/p'),
@@ -160,10 +165,10 @@ describe('TermUtil', () => {
 
     it('should transform a string quad to a quad', async () => {
       return expect(TermUtil.stringQuadToQuad({
-        graph: 'http://example.org/graph',
+        graph: '<http://example.org/graph>',
         object: '"literal"',
-        predicate: 'http://example.org/p',
-        subject: 'http://example.org',
+        predicate: '<http://example.org/p>',
+        subject: '<http://example.org>',
       }).equals(quad(
         namedNode('http://example.org'),
         namedNode('http://example.org/p'),
@@ -176,8 +181,8 @@ describe('TermUtil', () => {
       it('should transform a string triple to a triple', async () => {
         return expect(TermUtil.stringQuadToQuad({
           object: '"literal"',
-          predicate: 'http://example.org/p',
-          subject: 'http://example.org',
+          predicate: '<http://example.org/p>',
+          subject: '<http://example.org>',
         }, DataFactory).equals(triple(
           namedNode('http://example.org'),
           namedNode('http://example.org/p'),
@@ -187,10 +192,10 @@ describe('TermUtil', () => {
 
       it('should transform a string quad to a quad', async () => {
         return expect(TermUtil.stringQuadToQuad({
-          graph: 'http://example.org/graph',
+          graph: '<http://example.org/graph>',
           object: '"literal"',
-          predicate: 'http://example.org/p',
-          subject: 'http://example.org',
+          predicate: '<http://example.org/p>',
+          subject: '<http://example.org>',
         }, DataFactory).equals(quad(
           namedNode('http://example.org'),
           namedNode('http://example.org/p'),
@@ -210,8 +215,8 @@ describe('TermUtil', () => {
       ))).toEqual({
         graph: '',
         object: '"literal"',
-        predicate: 'http://example.org/p',
-        subject: 'http://example.org',
+        predicate: '<http://example.org/p>',
+        subject: '<http://example.org>',
       });
     });
 
@@ -222,10 +227,10 @@ describe('TermUtil', () => {
         literal('literal'),
         namedNode('http://example.org/graph'),
       ))).toEqual({
-        graph: 'http://example.org/graph',
+        graph: '<http://example.org/graph>',
         object: '"literal"',
-        predicate: 'http://example.org/p',
-        subject: 'http://example.org',
+        predicate: '<http://example.org/p>',
+        subject: '<http://example.org>',
       });
     });
   });

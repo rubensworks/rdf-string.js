@@ -97,7 +97,7 @@ export function stringToTerm(value: string, dataFactory?: RDF.DataFactory): RDF.
     const language: string = getLiteralLanguage(value);
     const type: RDF.NamedNode = dataFactory.namedNode(getLiteralType(value));
     return dataFactory.literal(getLiteralValue(value), language || type);
-  default:  return dataFactory.namedNode(value);
+  default:  return dataFactory.namedNode(value.substring(1,value.length-1));
   }
 }
 
