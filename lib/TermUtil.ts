@@ -6,9 +6,9 @@ import * as RDF from "rdf-js";
  *
  * RDF Terms are represented as follows:
  * * Blank nodes: '_:myBlankNode'
- * * Variables:   '?myVariable'
- * * Literals:    '"myString"', '"myLanguageString"@en-us', '"3"^^xsd:number'
- * * URIs:        'http://example.org'
+ * * Variables:   '_myVariable'
+ * * Literals:    '"myString"', '"myLanguageString"@en-us', '"<p>e</p>"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#HTML>'
+ * * URIs:        '<http://example.org>'
  *
  * Quads/triples are represented as hashes with 'subject', 'predicate', 'object' and 'graph' (optional)
  * as keys, and string-based RDF terms as values.
@@ -24,7 +24,7 @@ export function termToString(term: RDF.Term): string {
     return null;
   }
   switch (term.termType) {
-  case 'NamedNode': return term.value;
+  case 'NamedNode': return '<'+term.value+'>';
   case 'BlankNode': return '_:' + term.value;
   case 'Literal':
     const literalValue: RDF.Literal = <RDF.Literal> term;
@@ -32,7 +32,7 @@ export function termToString(term: RDF.Term): string {
       (literalValue.datatype &&
       literalValue.datatype.value !== 'http://www.w3.org/2001/XMLSchema#string' &&
       literalValue.datatype.value !== 'http://www.w3.org/1999/02/22-rdf-syntax-ns#langString' ?
-        '^^' + literalValue.datatype.value : '') +
+        '^^<' + literalValue.datatype.value+'>' : '') +
       (literalValue.language ? '@' + literalValue.language : '');
   case 'Variable': return '?' + term.value;
   case 'DefaultGraph': return term.value;
