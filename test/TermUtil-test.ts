@@ -1,5 +1,6 @@
 import {blankNode, defaultGraph, literal, namedNode, quad, triple, variable} from "@rdfjs/data-model";
 import * as DataFactory from "@rdfjs/data-model";
+import * as RDF from "rdf-js";
 import * as TermUtil from "../index";
 
 describe('TermUtil', () => {
@@ -117,7 +118,9 @@ describe('TermUtil', () => {
       });
 
       it('should transform a literal with a datatype', async () => {
-        return expect(TermUtil.stringToTerm('"abc"^^http://blabla', DataFactory)
+        const typedDataFactory: RDF.DataFactory<RDF.Quad> = DataFactory;
+
+        return expect(TermUtil.stringToTerm('"abc"^^http://blabla', typedDataFactory)
           .equals(literal('abc', namedNode('http://blabla')))).toBeTruthy();
       });
 
