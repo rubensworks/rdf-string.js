@@ -34,6 +34,7 @@
   ],
   "devDependencies": {
     "@types/jest": "^25.1.0",
+    "@types/rdf-js": "^2.0.11",
     "coveralls": "^3.0.0",
     "jest": "^23.4.1",
     "manual-git-changelog": "^1.0.0",
