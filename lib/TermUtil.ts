@@ -85,7 +85,7 @@ export function getLiteralLanguage(literalValue: string): string {
  * @param {RDF.DataFactory} dataFactory An optional datafactory to create terms with.
  * @return {RDF.Term} An RDF-JS term.
  */
-export function stringToTerm(value: string, dataFactory?: RDF.DataFactory): RDF.Term {
+export function stringToTerm(value: string, dataFactory?: RDF.DataFactory<RDF.BaseQuad>): RDF.Term {
   dataFactory = dataFactory || DataFactory;
   if (!value || !value.length) {
     return dataFactory.defaultGraph();
@@ -126,9 +126,9 @@ export function quadToStringQuad<Q extends RDF.BaseQuad = RDF.Quad>(q: Q): IStri
  * @template Q The type of quad, defaults to RDF.Quad.
  */
 export function stringQuadToQuad<Q extends RDF.BaseQuad = RDF.Quad>(stringQuad: IStringQuad,
-                                                                    dataFactory?: RDF.DataFactory): Q {
+                                                                    dataFactory?: RDF.DataFactory<Q>): Q {
   dataFactory = dataFactory || DataFactory;
-  return dataFactory.quad<Q>(
+  return dataFactory.quad(
     stringToTerm(stringQuad.subject, dataFactory),
     stringToTerm(stringQuad.predicate, dataFactory),
     stringToTerm(stringQuad.object, dataFactory),
