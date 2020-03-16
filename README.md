@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/rubensworks/rdf-string.js.svg?branch=master)](https://travis-ci.org/rubensworks/rdf-string.js)
 [![Coverage Status](https://coveralls.io/repos/github/rubensworks/rdf-string.js/badge.svg?branch=master)](https://coveralls.io/github/rubensworks/rdf-string.js?branch=master)
-[![npm version](https://badge.fury.io/js/rdf-string.svg)](https://www.npmjs.com/package/rdf-string) [![Greenkeeper badge](https://badges.greenkeeper.io/rubensworks/rdf-string.js.svg)](https://greenkeeper.io/)
+[![npm version](https://badge.fury.io/js/rdf-string.svg)](https://www.npmjs.com/package/rdf-string)
 
 This package contains utility functions to convert between the string-based
 and [RDFJS](https://github.com/rdfjs/representation-task-force/) representations of RDF terms, quads and triples.
