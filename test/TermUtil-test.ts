@@ -7,7 +7,8 @@ describe('TermUtil', () => {
 
   describe('#termToString', () => {
     it('should transform a falsy value', async () => {
-      return expect(TermUtil.termToString(null)).toBeFalsy();
+      expect(TermUtil.termToString(null)).toBeFalsy();
+      expect(TermUtil.termToString(undefined)).toBeFalsy();
     });
 
     it('should transform a named node', async () => {
@@ -111,6 +112,12 @@ describe('TermUtil', () => {
 
       it('should transform a variable', async () => {
         return expect(TermUtil.stringToTerm('?v1', DataFactory)).toEqual(variable('v1'));
+      });
+
+      it('should throw on transforming a variable when the factory has no variable method', async () => {
+        const dataFactory: RDF.DataFactory = <any> {};
+        return expect(() => TermUtil.stringToTerm('?v1', dataFactory))
+          .toThrow(new Error('Missing \'variable()\' method on the given DataFactory'));
       });
 
       it('should transform a literal', async () => {

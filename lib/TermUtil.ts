@@ -19,9 +19,11 @@ import * as RDF from "rdf-js";
  * @param {RDF.Term} term An RDFJS term.
  * @return {string} A string-based term representation.
  */
-export function termToString(term: RDF.Term): string {
+export function termToString(term: RDF.Term): string;
+export function termToString(term: undefined | null): undefined;
+export function termToString<T extends RDF.Term | undefined | null>(term: T): string | undefined {
   if (!term) {
-    return null;
+    return undefined;
   }
   switch (term.termType) {
   case 'NamedNode': return term.value;
@@ -85,14 +87,18 @@ export function getLiteralLanguage(literalValue: string): string {
  * @param {RDF.DataFactory} dataFactory An optional datafactory to create terms with.
  * @return {RDF.Term} An RDF-JS term.
  */
-export function stringToTerm(value: string, dataFactory?: RDF.DataFactory<RDF.BaseQuad>): RDF.Term {
+export function stringToTerm(value: string | undefined, dataFactory?: RDF.DataFactory<RDF.BaseQuad>): RDF.Term {
   dataFactory = dataFactory || DataFactory;
   if (!value || !value.length) {
     return dataFactory.defaultGraph();
   }
   switch (value[0]) {
   case '_': return dataFactory.blankNode(value.substr(2));
-  case '?': return dataFactory.variable(value.substr(1));
+  case '?':
+    if (!dataFactory.variable) {
+      throw new Error(`Missing 'variable()' method on the given DataFactory`);
+    }
+    return dataFactory.variable(value.substr(1));
   case '"':
     const language: string = getLiteralLanguage(value);
     const type: RDF.NamedNode = dataFactory.namedNode(getLiteralType(value));
