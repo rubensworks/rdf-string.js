@@ -1,6 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+<a name="v1.4.0"></a>
+## [v1.4.0](https://github.com/rubensworks/rdf-string.js/compare/v1.3.1...v1.4.0) - 2020-04-20
+
+### Changed
+* [Enable strict TS compilation](https://github.com/rubensworks/rdf-string.js/commit/10ea40525baa06d0c12b61a5bae96a9d62c8a9f8)
+* [Update DataFactory generics](https://github.com/rubensworks/rdf-string.js/commit/93bf88a08b504c6e02ccb830897c4dd7cdd3a1ca)
+
 <a name="v1.3.1"></a>
 ## [v1.3.1](https://github.com/rubensworks/rdf-string.js/compare/v1.3.0...v1.3.1) - 2018-11-08
 
