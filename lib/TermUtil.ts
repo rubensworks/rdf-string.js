@@ -21,6 +21,7 @@ import * as RDF from "rdf-js";
  */
 export function termToString(term: RDF.Term): string;
 export function termToString(term: undefined | null): undefined;
+export function termToString<T extends RDF.Term | undefined | null>(term: T): string | undefined;
 export function termToString<T extends RDF.Term | undefined | null>(term: T): string | undefined {
   if (!term) {
     return undefined;
