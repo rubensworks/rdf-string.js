@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+<a name="v1.4.1"></a>
+## [v1.4.1](https://github.com/rubensworks/rdf-string.js/compare/v1.4.0...v1.4.1) - 2020-04-20
+
+### Fixed
+* [Fix not all termToString overloads being compiled into d.ts](https://github.com/rubensworks/rdf-string.js/commit/91c7572d9ea86316b01b3bb41d3008db9c4f6534)
+
 <a name="v1.4.0"></a>
 ## [v1.4.0](https://github.com/rubensworks/rdf-string.js/compare/v1.3.1...v1.4.0) - 2020-04-20
 
