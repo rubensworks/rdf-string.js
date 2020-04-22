@@ -19,26 +19,24 @@ import * as RDF from "rdf-js";
  * @param {RDF.Term} term An RDFJS term.
  * @return {string} A string-based term representation.
  */
-export function termToString(term: RDF.Term): string;
-export function termToString(term: undefined | null): undefined;
-export function termToString<T extends RDF.Term | undefined | null>(term: T): string | undefined;
-export function termToString<T extends RDF.Term | undefined | null>(term: T): string | undefined {
+export function termToString<T extends RDF.Term | undefined | null>(term: T): T extends RDF.Term ? string : undefined {
+  // TODO: remove nasty any casts when this TS bug has been fixed: https://github.com/microsoft/TypeScript/issues/26933
   if (!term) {
-    return undefined;
+    return <any> undefined;
   }
   switch (term.termType) {
-  case 'NamedNode': return term.value;
-  case 'BlankNode': return '_:' + term.value;
+  case 'NamedNode': return <any> term.value;
+  case 'BlankNode': return <any> ('_:' + term.value);
   case 'Literal':
     const literalValue: RDF.Literal = <RDF.Literal> term;
-    return '"' + literalValue.value + '"' +
+    return <any> ('"' + literalValue.value + '"' +
       (literalValue.datatype &&
       literalValue.datatype.value !== 'http://www.w3.org/2001/XMLSchema#string' &&
       literalValue.datatype.value !== 'http://www.w3.org/1999/02/22-rdf-syntax-ns#langString' ?
         '^^' + literalValue.datatype.value : '') +
-      (literalValue.language ? '@' + literalValue.language : '');
-  case 'Variable': return '?' + term.value;
-  case 'DefaultGraph': return term.value;
+      (literalValue.language ? '@' + literalValue.language : ''));
+  case 'Variable': return <any> ('?' + term.value);
+  case 'DefaultGraph': return <any> term.value;
   }
 }
 

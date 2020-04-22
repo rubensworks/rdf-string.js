@@ -38,6 +38,42 @@ describe('TermUtil', () => {
     it('should transform a literal with a datatype', async () => {
       return expect(TermUtil.termToString(literal('abc', namedNode('http://ex')))).toEqual('"abc"^^http://ex');
     });
+
+    it('should be usable within a map operation on generic term types', async () => {
+      const terms: RDF.Term[] = [ namedNode('http://example.org/a'), namedNode('http://example.org/b') ];
+      const stringTerms: string[] = terms.map(TermUtil.termToString);
+      return expect(stringTerms).toEqual([ 'http://example.org/a', 'http://example.org/b' ]);
+    });
+
+    it('should be usable within a map operation on specific term types', async () => {
+      const terms: RDF.NamedNode[] = [ namedNode('http://example.org/a'), namedNode('http://example.org/b') ];
+      const stringTerms: string[] = terms.map(TermUtil.termToString);
+      return expect(stringTerms).toEqual([ 'http://example.org/a', 'http://example.org/b' ]);
+    });
+
+    it('should be usable within a map operation on null', async () => {
+      const terms: null[] = [ null, null ];
+      const stringTerms: undefined[] = terms.map(TermUtil.termToString);
+      return expect(stringTerms).toEqual([ undefined, undefined ]);
+    });
+
+    it('should be usable within a map operation on undefined', async () => {
+      const terms: undefined[] = [ undefined, undefined ];
+      const stringTerms: undefined[] = terms.map(TermUtil.termToString);
+      return expect(stringTerms).toEqual([ undefined, undefined ]);
+    });
+
+    it('should be usable within a map operation on null and undefined', async () => {
+      const terms: (null | undefined)[] = [ null, undefined ];
+      const stringTerms: undefined[] = terms.map(TermUtil.termToString);
+      return expect(stringTerms).toEqual([ undefined, undefined ]);
+    });
+
+    it('should be usable within a map operation on terms and undefined', async () => {
+      const terms: (RDF.NamedNode | undefined)[] = [ namedNode('http://example.org/a'), undefined ];
+      const stringTerms: (string | undefined)[] = terms.map(TermUtil.termToString);
+      return expect(stringTerms).toEqual([ 'http://example.org/a', undefined ]);
+    });
   });
 
   describe('#getLiteralValue', () => {
