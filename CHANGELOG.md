@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+<a name="v1.4.2"></a>
+## [v1.4.2](https://github.com/rubensworks/rdf-string.js/compare/v1.4.1...v1.4.2) - 2020-04-22
+
+### Fixed
+* [Fix issues with incorrect termToString output typings](https://github.com/rubensworks/rdf-string.js/commit/deaf9ebcf567febc6cfa58096c444a4d9c55bbdf)
+
 <a name="v1.4.1"></a>
 ## [v1.4.1](https://github.com/rubensworks/rdf-string.js/compare/v1.4.0...v1.4.1) - 2020-04-20
 
