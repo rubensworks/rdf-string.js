@@ -7,10 +7,24 @@
 This package contains utility functions to convert between the string-based
 and [RDFJS](https://github.com/rdfjs/representation-task-force/) representations of RDF terms, quads and triples.
 
-This allows for convenient and compact interaction with RDF terms and quads.
+This allows for convenient and compact interaction with RDF terms and quads,
+as they can be serialized as plain JSON.
 
 This string-based representation is based on the
-[triple representation of N3.js](https://github.com/RubenVerborgh/N3.js#triple-representation). 
+[*old* triple representation of N3.js](https://github.com/rdfjs/N3.js/tree/v0.11.0#triple-representation).
+Namely, quads are represented as follows:
+```
+{
+  subject:   'http://example.org/cartoons#Tom',
+  predicate: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type',
+  object:    'http://example.org/cartoons#Cat'
+  graph:     'http://example.org/myGraph'
+}
+```
+Different terms types in quads are represented as follows:
+* **URLs, URIs and IRIs are simple strings**: `'http://example.org/cartoons#Tom'`
+* **Literals are represented as double quoted strings**: `'"Tom"'`, `'"Tom"@en-gb'`, `'"1"^^http://www.w3.org/2001/XMLSchema#integer'`
+* **Variables are prefixed by `?`**: `'?variableName'`
 
 ## Usage
 
