@@ -7,6 +7,8 @@
 This package contains utility functions to convert between the string-based
 and [RDFJS](https://github.com/rdfjs/representation-task-force/) representations of RDF terms, quads and triples.
 
+_If you are looking for a Turtle-based string syntax, have a look at [RDF String Turtle](https://github.com/rubensworks/rdf-string-ttl.js)_
+
 This allows for convenient and compact interaction with RDF terms and quads,
 as they can be serialized as plain JSON.
 
