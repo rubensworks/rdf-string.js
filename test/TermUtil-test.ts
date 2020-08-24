@@ -39,6 +39,35 @@ describe('TermUtil', () => {
       return expect(TermUtil.termToString(literal('abc', namedNode('http://ex')))).toEqual('"abc"^^http://ex');
     });
 
+    it('should transform a quad with non-default graph', async () => {
+      return expect(TermUtil.termToString(quad(
+        namedNode('ex:s'),
+        namedNode('ex:p'),
+        namedNode('ex:o'),
+        namedNode('ex:g'),
+      ))).toEqual('<<ex:s ex:p ex:o ex:g>>');
+    });
+
+    it('should transform a quad with default graph', async () => {
+      return expect(TermUtil.termToString(quad(
+        namedNode('ex:s'),
+        namedNode('ex:p'),
+        namedNode('ex:o'),
+      ))).toEqual('<<ex:s ex:p ex:o>>');
+    });
+
+    it('should transform a nested quad', async () => {
+      return expect(TermUtil.termToString(quad(
+        quad(
+          namedNode('ex:s'),
+          namedNode('ex:p'),
+          namedNode('ex:o'),
+        ),
+        namedNode('ex:p'),
+        namedNode('ex:o'),
+      ))).toEqual('<<<<ex:s ex:p ex:o>> ex:p ex:o>>');
+    });
+
     it('should be usable within a map operation on generic term types', async () => {
       const terms: RDF.Term[] = [ namedNode('http://example.org/a'), namedNode('http://example.org/b') ];
       const stringTerms: string[] = terms.map(TermUtil.termToString);
@@ -187,6 +216,70 @@ describe('TermUtil', () => {
       it('should transform a named node', async () => {
         return expect(TermUtil.stringToTerm('http://example.org', DataFactory))
           .toEqual(namedNode('http://example.org'));
+      });
+
+      it('should transform a quad with graph', async () => {
+        return expect(TermUtil.stringToTerm('<<ex:s ex:p ex:o ex:g>>', DataFactory))
+          .toEqual(quad(
+            namedNode('ex:s'),
+            namedNode('ex:p'),
+            namedNode('ex:o'),
+            namedNode('ex:g'),
+          ));
+      });
+
+      it('should transform a quad with default graph', async () => {
+        return expect(TermUtil.stringToTerm('<<ex:s ex:p ex:o>>', DataFactory))
+          .toEqual(quad(
+            namedNode('ex:s'),
+            namedNode('ex:p'),
+            namedNode('ex:o'),
+          ));
+      });
+
+      it('should transform a nested quad', async () => {
+        return expect(TermUtil.stringToTerm('<<<<ex:s ex:p ex:o>> ex:p ex:o>>', DataFactory))
+          .toEqual(quad(
+            quad(
+              namedNode('ex:s'),
+              namedNode('ex:p'),
+              namedNode('ex:o'),
+            ),
+            namedNode('ex:p'),
+            namedNode('ex:o'),
+          ));
+      });
+
+      it('should transform nested quads', async () => {
+        return expect(TermUtil.stringToTerm('<<<<ex:s ex:p ex:o>> ex:p <<ex:s ex:p ex:o>>>>', DataFactory))
+          .toEqual(quad(
+            quad(
+              namedNode('ex:s'),
+              namedNode('ex:p'),
+              namedNode('ex:o'),
+            ),
+            namedNode('ex:p'),
+            quad(
+              namedNode('ex:s'),
+              namedNode('ex:p'),
+              namedNode('ex:o'),
+            ),
+          ));
+      });
+
+      it('should error on a quad with incorrect inner tags', async () => {
+        return expect(() => TermUtil.stringToTerm('<<<>>', DataFactory))
+          .toThrow(new Error('Found opening tag without closing tag in <<<>>'));
+      });
+
+      it('should error on a quad with incorrect inner tags', async () => {
+        return expect(() => TermUtil.stringToTerm('<<>>>', DataFactory))
+          .toThrow(new Error('Found closing tag without opening tag in <<>>>'));
+      });
+
+      it('should error on a quad with incorrect term count', async () => {
+        return expect(() => TermUtil.stringToTerm('<<a b>>', DataFactory))
+          .toThrow(new Error('Nested quad syntax error <<a b>>'));
       });
     });
   });

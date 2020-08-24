@@ -35,6 +35,7 @@ export function termToString<T extends RDF.Term | undefined | null>(term: T): T 
       literalValue.datatype.value !== 'http://www.w3.org/1999/02/22-rdf-syntax-ns#langString' ?
         '^^' + literalValue.datatype.value : '') +
       (literalValue.language ? '@' + literalValue.language : ''));
+  case 'Quad': return <any> `<<${termToString(term.subject)} ${termToString(term.predicate)} ${termToString(term.object)}${term.graph.termType === 'DefaultGraph' ? '' : ' ' + termToString(term.graph)}>>`;
   case 'Variable': return <any> ('?' + term.value);
   case 'DefaultGraph': return <any> term.value;
   }
@@ -102,7 +103,47 @@ export function stringToTerm(value: string | undefined, dataFactory?: RDF.DataFa
     const language: string = getLiteralLanguage(value);
     const type: RDF.NamedNode = dataFactory.namedNode(getLiteralType(value));
     return dataFactory.literal(getLiteralValue(value), language || type);
-  default:  return dataFactory.namedNode(value);
+  case '<':
+  default:
+    if (value.startsWith('<<') && value.endsWith('>>')) {
+      // Iterate character-by-character to detect spaces that are *not* wrapped in <<>>
+      const terms = value.slice(2, -2);
+      const stringTerms: string[] = [];
+      let ignoreTags: number = 0;
+      let lastIndex = 0;
+      for (let i = 0; i < terms.length; i++) {
+        const char = terms[i];
+        if (char === '<') ignoreTags++;
+        if (char === '>') {
+          if (ignoreTags === 0) {
+            throw new Error('Found closing tag without opening tag in ' + value);
+          } else {
+            ignoreTags--
+          }
+        }
+        if (char === ' ' && ignoreTags === 0) {
+          stringTerms.push(terms.slice(lastIndex, i));
+          lastIndex = i + 1;
+        }
+      }
+      if (ignoreTags !== 0) {
+        throw new Error('Found opening tag without closing tag in ' + value);
+      }
+      stringTerms.push(terms.slice(lastIndex, terms.length));
+
+      // We require 3 or 4 components
+      if (stringTerms.length !== 3 && stringTerms.length !== 4) {
+        throw new Error('Nested quad syntax error ' + value);
+      }
+
+      return dataFactory.quad(
+        stringToTerm(stringTerms[0]),
+        stringToTerm(stringTerms[1]),
+        stringToTerm(stringTerms[2]),
+        stringTerms[3] ? stringToTerm(stringTerms[3]) : undefined,
+      );
+    }
+    return dataFactory.namedNode(value);
   }
 }
 
