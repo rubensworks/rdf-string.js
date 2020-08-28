@@ -1,6 +1,15 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+<a name="v1.5.0"></a>
+## [v1.5.0](https://github.com/rubensworks/rdf-string.js/compare/v1.4.2...v1.5.0) - 2020-08-28
+
+### Added
+* [Add support for RDF*](https://github.com/rubensworks/rdf-string.js/commit/beecfd5e85a4c40f7ac90154a2e1c8d880fe10c2)
+
+### Changed
+* [Migrate to data factory that supports nested quads](https://github.com/rubensworks/rdf-string.js/commit/e5bc0b4d0131f22919d08f0e871b145a0deea0c3)
+
 <a name="v1.4.2"></a>
 ## [v1.4.2](https://github.com/rubensworks/rdf-string.js/compare/v1.4.1...v1.4.2) - 2020-04-22
 
