@@ -1,5 +1,7 @@
-import * as DataFactory from "@rdfjs/data-model";
+import { DataFactory } from "rdf-data-factory";
 import * as RDF from "rdf-js";
+
+const FACTORY = new DataFactory();
 
 /**
  * Utility methods for converting between string-based RDF representations and RDFJS objects.
@@ -88,7 +90,7 @@ export function getLiteralLanguage(literalValue: string): string {
  * @return {RDF.Term} An RDF-JS term.
  */
 export function stringToTerm(value: string | undefined, dataFactory?: RDF.DataFactory<RDF.BaseQuad>): RDF.Term {
-  dataFactory = dataFactory || DataFactory;
+  dataFactory = dataFactory || FACTORY;
   if (!value || !value.length) {
     return dataFactory.defaultGraph();
   }
@@ -173,7 +175,7 @@ export function quadToStringQuad<Q extends RDF.BaseQuad = RDF.Quad>(q: Q): IStri
  */
 export function stringQuadToQuad<Q extends RDF.BaseQuad = RDF.Quad>(stringQuad: IStringQuad,
                                                                     dataFactory?: RDF.DataFactory<Q>): Q {
-  dataFactory = dataFactory || DataFactory;
+  dataFactory = <RDF.DataFactory<Q>> dataFactory || FACTORY;
   return dataFactory.quad(
     stringToTerm(stringQuad.subject, dataFactory),
     stringToTerm(stringQuad.predicate, dataFactory),
