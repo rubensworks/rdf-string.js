@@ -1,6 +1,6 @@
 # RDF String
 
-[![Build Status](https://travis-ci.org/rubensworks/rdf-string.js.svg?branch=master)](https://travis-ci.org/rubensworks/rdf-string.js)
+[![Build status](https://github.com/rubensworks/rdf-string.js/workflows/CI/badge.svg)](https://github.com/rubensworks/rdf-string.js/actions?query=workflow%3ACI)
 [![Coverage Status](https://coveralls.io/repos/github/rubensworks/rdf-string.js/badge.svg?branch=master)](https://coveralls.io/github/rubensworks/rdf-string.js?branch=master)
 [![npm version](https://badge.fury.io/js/rdf-string.svg)](https://www.npmjs.com/package/rdf-string)
 
