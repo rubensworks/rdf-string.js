@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+<a name="v1.6.0"></a>
+## [v1.6.0](https://github.com/rubensworks/rdf-string.js/compare/v1.5.0...v1.6.0) - 2021-08-11
+
+### Changed
+* [Migrate to @rdfjs/types](https://github.com/rubensworks/rdf-string.js/commit/80f252757101d45f693899fd33cd138cc845adbe)
+
 <a name="v1.5.0"></a>
 ## [v1.5.0](https://github.com/rubensworks/rdf-string.js/compare/v1.4.2...v1.5.0) - 2020-08-28
 
