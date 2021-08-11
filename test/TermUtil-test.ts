@@ -1,5 +1,5 @@
 import { DataFactory } from "rdf-data-factory";
-import * as RDF from "rdf-js";
+import * as RDF from "@rdfjs/types";
 import * as TermUtil from "../index";
 
 const FACTORY = new DataFactory();
