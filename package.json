@@ -65,7 +65,7 @@
     "lint": "tslint index.ts lib/**/*.ts test/**/*.ts --exclude '**/*.d.ts'",
     "build": "tsc",
     "validate": "npm ls",
-    "prepare": "npm run build",
+    "prepare": "tsc --sourceMap false --inlineSources false --inlineSourceMap false",
     "version": "manual-git-changelog onversion"
   }
 }
