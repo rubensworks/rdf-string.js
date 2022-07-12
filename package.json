@@ -20,8 +20,10 @@
   "license": "MIT",
   "files": [
     "lib/**/*.d.ts",
+    "lib/**/*.js.map",
     "lib/**/*.js",
     "index.d.ts",
+    "index.js.map",
     "index.js"
   ],
   "dependencies": {
