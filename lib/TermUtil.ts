@@ -125,11 +125,13 @@ export function stringToTerm(value: string | undefined, dataFactory?: RDF.DataFa
           }
         }
         if (char === '"') {
-          let escaped = false, j = i;
+          let escaped = false
+          let j = i;
           while (j-- > 0 && terms[j] === '\\') {
             escaped = !escaped;
           }
           if (!escaped) {
+            // We have reached an unescaped quote
             inQuote = !inQuote;
           }
         }
