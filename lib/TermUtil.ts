@@ -113,6 +113,7 @@ export function stringToTerm(value: string | undefined, dataFactory?: RDF.DataFa
       let stringTerms: string[] = [];
       let ignoreTags: number = 0;
       let lastIndex = 0;
+      let inQuote = false;
       for (let i = 0; i < terms.length; i++) {
         const char = terms[i];
         if (char === '<') ignoreTags++;
@@ -123,7 +124,16 @@ export function stringToTerm(value: string | undefined, dataFactory?: RDF.DataFa
             ignoreTags--
           }
         }
-        if (char === ' ' && ignoreTags === 0) {
+        if (char === '"') {
+          let escaped = false, j = i;
+          while (j-- > 0 && terms[j] === '\\') {
+            escaped = !escaped;
+          }
+          if (!escaped) {
+            inQuote = !inQuote;
+          }
+        }
+        if (char === ' ' && !inQuote && ignoreTags === 0) {
           stringTerms.push(terms.slice(lastIndex, i));
 
           while (terms[i + 1] === ' ') {
