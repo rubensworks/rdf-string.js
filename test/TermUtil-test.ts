@@ -268,6 +268,108 @@ describe('TermUtil', () => {
           ));
       });
 
+      it('should transform nested quads with literal', async () => {
+        return expect(TermUtil.stringToTerm('<<<<ex:s ex:p ex:o>> ex:p <<ex:s ex:p "s">>>>', FACTORY))
+          .toEqual(FACTORY.quad(
+            FACTORY.quad(
+              FACTORY.namedNode('ex:s'),
+              FACTORY.namedNode('ex:p'),
+              FACTORY.namedNode('ex:o'),
+            ),
+            FACTORY.namedNode('ex:p'),
+            FACTORY.quad(
+              FACTORY.namedNode('ex:s'),
+              FACTORY.namedNode('ex:p'),
+              FACTORY.literal('s'),
+            ),
+          ));
+      });
+
+      it('should transform nested quads with escaped literal', async () => {
+        return expect(TermUtil.stringToTerm('<<<<ex:s ex:p ex:o>> ex:p <<ex:s ex:p "\\"s\\"">>>>', FACTORY))
+          .toEqual(FACTORY.quad(
+            FACTORY.quad(
+              FACTORY.namedNode('ex:s'),
+              FACTORY.namedNode('ex:p'),
+              FACTORY.namedNode('ex:o'),
+            ),
+            FACTORY.namedNode('ex:p'),
+            FACTORY.quad(
+              FACTORY.namedNode('ex:s'),
+              FACTORY.namedNode('ex:p'),
+              FACTORY.literal('\\"s\\"'),
+            ),
+          ));
+      });
+
+      it('should transform nested quads with escaped literal with spaces', async () => {
+        return expect(TermUtil.stringToTerm('<<<<ex:s ex:p ex:o>> ex:p <<ex:s ex:p "\\"s\\"  \\\\">>>>', FACTORY))
+          .toEqual(FACTORY.quad(
+            FACTORY.quad(
+              FACTORY.namedNode('ex:s'),
+              FACTORY.namedNode('ex:p'),
+              FACTORY.namedNode('ex:o'),
+            ),
+            FACTORY.namedNode('ex:p'),
+            FACTORY.quad(
+              FACTORY.namedNode('ex:s'),
+              FACTORY.namedNode('ex:p'),
+              FACTORY.literal('\\"s\\"  \\\\'),
+            ),
+          ));
+      });
+
+      it('should transform nested quads with a space between quote and quoted triple', async () => {
+        return expect(TermUtil.stringToTerm('<< <<ex:s ex:p ex:o>> ex:p <<ex:s ex:p ex:o>> >>', FACTORY))
+          .toEqual(FACTORY.quad(
+            FACTORY.quad(
+              FACTORY.namedNode('ex:s'),
+              FACTORY.namedNode('ex:p'),
+              FACTORY.namedNode('ex:o'),
+            ),
+            FACTORY.namedNode('ex:p'),
+            FACTORY.quad(
+              FACTORY.namedNode('ex:s'),
+              FACTORY.namedNode('ex:p'),
+              FACTORY.namedNode('ex:o'),
+            ),
+          ));
+      });
+
+      it('should transform nested quads with a many spaces between quote and quoted triple', async () => {
+        return expect(TermUtil.stringToTerm('<< <<ex:s ex:p ex:o  >>   ex:p << ex:s ex:p ex:o>> >>', FACTORY))
+          .toEqual(FACTORY.quad(
+            FACTORY.quad(
+              FACTORY.namedNode('ex:s'),
+              FACTORY.namedNode('ex:p'),
+              FACTORY.namedNode('ex:o'),
+            ),
+            FACTORY.namedNode('ex:p'),
+            FACTORY.quad(
+              FACTORY.namedNode('ex:s'),
+              FACTORY.namedNode('ex:p'),
+              FACTORY.namedNode('ex:o'),
+            ),
+          ));
+      });
+
+      it('should transform nested quads with a many spaces between quote and quoted triple and angle bracket named node', async () => {
+        return expect(TermUtil.stringToTerm('<< <<ex:s ex:p ex:o  >>   <p> << <s> ex:p ex:o>> >>', FACTORY))
+          .toEqual(FACTORY.quad(
+            FACTORY.quad(
+              FACTORY.namedNode('ex:s'),
+              FACTORY.namedNode('ex:p'),
+              FACTORY.namedNode('ex:o'),
+            ),
+            FACTORY.namedNode('p'),
+            FACTORY.quad(
+              FACTORY.namedNode('s'),
+              FACTORY.namedNode('ex:p'),
+              FACTORY.namedNode('ex:o'),
+            ),
+          ));
+      });
+
       it('should error on a quad with incorrect inner tags', async () => {
         return expect(() => TermUtil.stringToTerm('<<<>>', FACTORY))
           .toThrow(new Error('Found opening tag without closing tag in <<<>>'));

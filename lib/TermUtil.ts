@@ -109,10 +109,11 @@ export function stringToTerm(value: string | undefined, dataFactory?: RDF.DataFa
   default:
     if (value.startsWith('<<') && value.endsWith('>>')) {
       // Iterate character-by-character to detect spaces that are *not* wrapped in <<>>
-      const terms = value.slice(2, -2);
-      const stringTerms: string[] = [];
+      const terms = value.slice(2, -2).trim();
+      let stringTerms: string[] = [];
       let ignoreTags: number = 0;
       let lastIndex = 0;
+      let inQuote = false;
       for (let i = 0; i < terms.length; i++) {
         const char = terms[i];
         if (char === '<') ignoreTags++;
@@ -123,8 +124,24 @@ export function stringToTerm(value: string | undefined, dataFactory?: RDF.DataFa
             ignoreTags--
           }
         }
-        if (char === ' ' && ignoreTags === 0) {
+        if (char === '"') {
+          let escaped = false
+          let j = i;
+          while (j-- > 0 && terms[j] === '\\') {
+            escaped = !escaped;
+          }
+          if (!escaped) {
+            // We have reached an unescaped quote
+            inQuote = !inQuote;
+          }
+        }
+        if (char === ' ' && !inQuote && ignoreTags === 0) {
           stringTerms.push(terms.slice(lastIndex, i));
+
+          while (terms[i + 1] === ' ') {
+            i += 1;
+          }
+
           lastIndex = i + 1;
         }
       }
@@ -137,6 +154,8 @@ export function stringToTerm(value: string | undefined, dataFactory?: RDF.DataFa
       if (stringTerms.length !== 3 && stringTerms.length !== 4) {
         throw new Error('Nested quad syntax error ' + value);
       }
+
+      stringTerms = stringTerms.map(term => term.startsWith('<') && !term.includes(' ') ? term.slice(1, -1) : term)
 
       return dataFactory.quad(
         stringToTerm(stringTerms[0]),
