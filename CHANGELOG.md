@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+<a name="v1.6.2"></a>
+## [v1.6.2](https://github.com/rubensworks/rdf-string.js/compare/v1.6.1...v1.6.2) - 2022-11-28
+
+### Fixed
+* [Fix incorrect handling of spaces and brackets in quoted triples](https://github.com/rubensworks/rdf-string.js/commit/ffa041101ddebebf12c58d3896f95e365f68f5f2)
+
 <a name="v1.6.1"></a>
 ## [v1.6.1](https://github.com/rubensworks/rdf-string.js/compare/v1.6.0...v1.6.1) - 2022-07-13
 
