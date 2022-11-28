@@ -66,6 +66,9 @@ export function getLiteralType(literalValue: string): string {
   if (!match) {
     throw new Error(literalValue + ' is not a literal');
   }
+  if (match[1] && match[1].startsWith('<') && match[1].endsWith('>')) {
+    return match[1].slice(1, -1);
+  }
   return match[1] || (match[2]
     ? 'http://www.w3.org/1999/02/22-rdf-syntax-ns#langString' : 'http://www.w3.org/2001/XMLSchema#string');
 }
@@ -114,11 +117,20 @@ export function stringToTerm(value: string | undefined, dataFactory?: RDF.DataFa
       let ignoreTags: number = 0;
       let lastIndex = 0;
       let inQuote = false;
+      let inLiteralTag = false
       for (let i = 0; i < terms.length; i++) {
         const char = terms[i];
-        if (char === '<') ignoreTags++;
+        if (char === '<') {
+          if (terms[i-1] === '^' && terms[i-2] === '^') {
+            inLiteralTag = true;
+          } else {
+            ignoreTags++;
+          }
+        }
         if (char === '>') {
-          if (ignoreTags === 0) {
+          if (inLiteralTag) {
+            inLiteralTag = false
+          } else if (ignoreTags === 0) {
             throw new Error('Found closing tag without opening tag in ' + value);
           } else {
             ignoreTags--

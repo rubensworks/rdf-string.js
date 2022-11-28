@@ -370,6 +370,31 @@ describe('TermUtil', () => {
           ));
       });
 
+      it('should transform literal with explicit datatype as full url', () => {
+        expect(TermUtil.stringToTerm('"o"^^<http://example.org/string>', FACTORY)).toEqual(FACTORY.literal('o', FACTORY.namedNode("http://example.org/string")));
+
+        expect(TermUtil.stringToTerm('"o"^^<http://example.org/string>', FACTORY)
+        .equals(FACTORY.literal('o', FACTORY.namedNode("http://example.org/string"))))
+          .toEqual(true);
+      });
+
+      it('should transform nested quads with a many spaces between quote and quoted triple and angle bracket named node and literal with explicit datatype', async () => {  
+        return expect(TermUtil.stringToTerm('<< <<ex:s ex:p ex:o  >>   <p> << <s> ex:p "o"^^<http://example.org/string> >> >>', FACTORY))
+          .toEqual(FACTORY.quad(
+            FACTORY.quad(
+              FACTORY.namedNode('ex:s'),
+              FACTORY.namedNode('ex:p'),
+              FACTORY.namedNode('ex:o'),
+            ),
+            FACTORY.namedNode('p'),
+            FACTORY.quad(
+              FACTORY.namedNode('s'),
+              FACTORY.namedNode('ex:p'),
+              FACTORY.literal('o', FACTORY.namedNode("http://example.org/string")),
+            ),
+          ));
+      });
+
       it('should error on a quad with incorrect inner tags', async () => {
         return expect(() => TermUtil.stringToTerm('<<<>>', FACTORY))
           .toThrow(new Error('Found opening tag without closing tag in <<<>>'));
