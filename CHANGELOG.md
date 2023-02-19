@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+<a name="v1.6.3"></a>
+## [v1.6.3](https://github.com/rubensworks/rdf-string.js/compare/v1.6.2...v1.6.3) - 2023-02-19
+
+### Changed
+* [Optimize stringToTerm for named nodes](https://github.com/rubensworks/rdf-string.js/commit/e89c18578cfe629e03f46b487cde77e0eeea1524)
+
 <a name="v1.6.2"></a>
 ## [v1.6.2](https://github.com/rubensworks/rdf-string.js/compare/v1.6.1...v1.6.2) - 2022-11-28
 

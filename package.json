@@ -1,6 +1,6 @@
 {
   "name": "rdf-string",
-  "version": "1.6.2",
+  "version": "1.6.3",
   "description": "Convenience functions for creating and serializing RDF terms and quads",
   "keywords": [
     "rdf",
