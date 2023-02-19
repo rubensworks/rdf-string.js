@@ -107,7 +107,7 @@ export function stringToTerm(value: string | undefined, dataFactory?: RDF.DataFa
     return dataFactory.literal(getLiteralValue(value), language || type);
   case '<':
   default:
-    if (value.startsWith('<<') && value.endsWith('>>')) {
+    if (value[0] === '<' && value.length > 4 && value[1] === '<' && value[value.length - 1] === '>' && value[value.length - 2] === '>') {
       // Iterate character-by-character to detect spaces that are *not* wrapped in <<>>
       const terms = value.slice(2, -2).trim();
       let stringTerms: string[] = [];
