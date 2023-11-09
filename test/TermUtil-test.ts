@@ -1,6 +1,7 @@
 import { DataFactory } from "rdf-data-factory";
 import * as RDF from "@rdfjs/types";
 import * as TermUtil from "../index";
+import { getLiteralDirection } from '../lib/TermUtil';
 
 const FACTORY = new DataFactory();
 
@@ -34,6 +35,11 @@ describe('TermUtil', () => {
 
     it('should transform a literal with a language', async () => {
       return expect(TermUtil.termToString(FACTORY.literal('abc', 'en'))).toEqual('"abc"@en');
+    });
+
+    it('should transform a literal with a language and direction', async () => {
+      return expect(TermUtil.termToString(FACTORY.literal('abc', { language: 'en', direction: 'ltr' })))
+        .toEqual('"abc"@en--ltr');
     });
 
     it('should transform a literal with a datatype', async () => {
@@ -124,6 +130,12 @@ describe('TermUtil', () => {
     });
   });
 
+  describe('#getLiteralDirection', () => {
+    it('should error on invalid directions', async () => {
+      return expect(() => TermUtil.getLiteralDirection('"abc"@en--bla')).toThrow();
+    });
+  });
+
   describe('#stringToTerm', () => {
     it('should transform an empty string to default graph', async () => {
       return expect(TermUtil.stringToTerm('')).toEqual(FACTORY.defaultGraph());
@@ -157,6 +169,20 @@ describe('TermUtil', () => {
 
     it('should transform a literal with a language incorrectly', async () => {
       return expect(TermUtil.stringToTerm('"abc"@en').equals(FACTORY.literal('abc'))).toBeFalsy();
+    });
+
+    it('should transform a literal with a language and direction', async () => {
+      expect(TermUtil.stringToTerm('"abc"@en--ltr')
+        .equals(FACTORY.literal('abc', { language: 'en', direction: 'ltr' }))).toBeTruthy();
+      expect(TermUtil.stringToTerm('"abc"@en-us--ltr')
+        .equals(FACTORY.literal('abc', { language: 'en-us', direction: 'ltr' }))).toBeTruthy();
+    });
+
+    it('should transform a literal with a language and direction incorrectly', async () => {
+      expect(TermUtil.stringToTerm('"abc"@en--ltr')
+        .equals(FACTORY.literal('abc', { language: 'en', direction: 'rtl' }))).toBeFalsy();
+      expect(TermUtil.stringToTerm('"abc"@en-us--ltr')
+        .equals(FACTORY.literal('abc', { language: 'en-us', direction: 'rtl' }))).toBeFalsy();
     });
 
     it('should transform a default graph', async () => {
