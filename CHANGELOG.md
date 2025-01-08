@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+<a name="v2.0.1"></a>
+## [v2.0.1](https://github.com/rubensworks/rdf-string.js/compare/v2.0.0...v2.0.1) - 2025-01-08
+
+### Fixed
+* [Fix direction parsing looking into literal value](https://github.com/rubensworks/rdf-string.js/commit/b360b99b41ba637ff43a65b5c6249a7f6b47c8cb)
+
 <a name="v2.0.0"></a>
 ## [v2.0.0](https://github.com/rubensworks/rdf-string.js/compare/v1.6.3...v2.0.0) - 2025-01-08
 
