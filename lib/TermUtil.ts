@@ -9,7 +9,7 @@ const FACTORY = new DataFactory();
  * RDF Terms are represented as follows:
  * * Blank nodes: '_:myBlankNode'
  * * Variables:   '?myVariable'
- * * Literals:    '"myString"', '"myLanguageString"@en-us', '"3"^^xsd:number'
+ * * Literals:    '"myString"', '"myLanguageString"@en-us', '"myLanguageString"@en-us--ltr', '"3"^^xsd:number'
  * * URIs:        'http://example.org'
  *
  * Quads/triples are represented as hashes with 'subject', 'predicate', 'object' and 'graph' (optional)
@@ -34,9 +34,11 @@ export function termToString<T extends RDF.Term | undefined | null>(term: T): T 
     return <any> ('"' + literalValue.value + '"' +
       (literalValue.datatype &&
       literalValue.datatype.value !== 'http://www.w3.org/2001/XMLSchema#string' &&
-      literalValue.datatype.value !== 'http://www.w3.org/1999/02/22-rdf-syntax-ns#langString' ?
+      literalValue.datatype.value !== 'http://www.w3.org/1999/02/22-rdf-syntax-ns#langString' &&
+      literalValue.datatype.value !== 'http://www.w3.org/1999/02/22-rdf-syntax-ns#dirLangString'?
         '^^' + literalValue.datatype.value : '') +
-      (literalValue.language ? '@' + literalValue.language : ''));
+      (literalValue.language ? '@' + literalValue.language : '') +
+      (literalValue.direction ? '--' + literalValue.direction : ''));
   case 'Quad': return <any> `<<${termToString(term.subject)} ${termToString(term.predicate)} ${termToString(term.object)}${term.graph.termType === 'DefaultGraph' ? '' : ' ' + termToString(term.graph)}>>`;
   case 'Variable': return <any> ('?' + term.value);
   case 'DefaultGraph': return <any> term.value;
@@ -80,7 +82,35 @@ export function getLiteralLanguage(literalValue: string): string {
   if (!match) {
     throw new Error(literalValue + ' is not a literal');
   }
-  return match[1] ? match[1].toLowerCase() : '';
+  if (match[1]) {
+    let ret = match[1].toLowerCase();
+
+    // Remove everything after --, since this indicates the base direction, which will be parsed later.
+    const doubleDashPos = ret.indexOf('--');
+    if (doubleDashPos >= 0) {
+      ret = ret.slice(0, doubleDashPos);
+    }
+
+    return ret;
+  }
+  return '';
+}
+
+/**
+ * Get the direction of the given literal.
+ * @param {string} literalValue An RDF literal.
+ * @return {string} The direction of the literal.
+ */
+export function getLiteralDirection(literalValue: string): 'ltr' | 'rtl' | '' {
+  const doubleDashPos = literalValue.indexOf('--');
+  if (doubleDashPos >= 0) {
+    const direction = literalValue.slice(doubleDashPos + 2, literalValue.length);
+    if (direction === 'ltr' || direction === 'rtl') {
+      return direction;
+    }
+    throw new Error(literalValue + ' is not a literal with a valid direction');
+  }
+  return '';
 }
 
 /**
@@ -103,8 +133,9 @@ export function stringToTerm(value: string | undefined, dataFactory?: RDF.DataFa
     return dataFactory.variable(value.substr(1));
   case '"':
     const language: string = getLiteralLanguage(value);
+    const direction = getLiteralDirection(value);
     const type: RDF.NamedNode = dataFactory.namedNode(getLiteralType(value));
-    return dataFactory.literal(getLiteralValue(value), language || type);
+    return dataFactory.literal(getLiteralValue(value), language ? { language, direction } : type);
   case '<':
   default:
     if (value[0] === '<' && value.length > 4 && value[1] === '<' && value[value.length - 1] === '>' && value[value.length - 2] === '>') {

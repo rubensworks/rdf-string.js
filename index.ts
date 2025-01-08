@@ -1,5 +1,6 @@
 import {
   getLiteralLanguage,
+  getLiteralDirection,
   getLiteralType,
   getLiteralValue,
   IStringQuad,
@@ -10,6 +11,7 @@ import {
 } from './lib/TermUtil';
 export {
   getLiteralLanguage,
+  getLiteralDirection,
   getLiteralType,
   getLiteralValue,
   IStringQuad,
