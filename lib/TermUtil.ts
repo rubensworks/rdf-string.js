@@ -102,7 +102,7 @@ export function getLiteralLanguage(literalValue: string): string {
  * @return {string} The direction of the literal.
  */
 export function getLiteralDirection(literalValue: string): 'ltr' | 'rtl' | '' {
-  const doubleDashPos = literalValue.indexOf('--');
+  const doubleDashPos = literalValue.indexOf('--', literalValue.lastIndexOf('"'));
   if (doubleDashPos >= 0) {
     const direction = literalValue.slice(doubleDashPos + 2, literalValue.length);
     if (direction === 'ltr' || direction === 'rtl') {

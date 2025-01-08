@@ -1,7 +1,6 @@
 import { DataFactory } from "rdf-data-factory";
 import * as RDF from "@rdfjs/types";
 import * as TermUtil from "../index";
-import { getLiteralDirection } from '../lib/TermUtil';
 
 const FACTORY = new DataFactory();
 
@@ -176,6 +175,8 @@ describe('TermUtil', () => {
         .equals(FACTORY.literal('abc', { language: 'en', direction: 'ltr' }))).toBeTruthy();
       expect(TermUtil.stringToTerm('"abc"@en-us--ltr')
         .equals(FACTORY.literal('abc', { language: 'en-us', direction: 'ltr' }))).toBeTruthy();
+      expect(TermUtil.stringToTerm('"---"@en-us--ltr')
+        .equals(FACTORY.literal('---', { language: 'en-us', direction: 'ltr' }))).toBeTruthy();
     });
 
     it('should transform a literal with a language and direction incorrectly', async () => {
