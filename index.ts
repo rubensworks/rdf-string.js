@@ -9,6 +9,7 @@ import {
   stringToTerm,
   termToString,
 } from './lib/TermUtil';
+
 export {
   getLiteralLanguage,
   getLiteralDirection,

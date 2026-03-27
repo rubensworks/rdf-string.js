@@ -1,5 +1,5 @@
-import { DataFactory } from "rdf-data-factory";
-import * as RDF from "@rdfjs/types";
+import type * as RDF from '@rdfjs/types';
+import { DataFactory } from 'rdf-data-factory';
 
 const FACTORY = new DataFactory();
 
@@ -23,26 +23,30 @@ const FACTORY = new DataFactory();
  */
 export function termToString<T extends RDF.Term | undefined | null>(term: T): T extends RDF.Term ? string : undefined {
   // TODO: remove nasty any casts when this TS bug has been fixed: https://github.com/microsoft/TypeScript/issues/26933
+  /* eslint-disable ts/no-unsafe-return */
   if (!term) {
     return <any> undefined;
   }
   switch (term.termType) {
-  case 'NamedNode': return <any> term.value;
-  case 'BlankNode': return <any> ('_:' + term.value);
-  case 'Literal':
-    const literalValue: RDF.Literal = <RDF.Literal> term;
-    return <any> ('"' + literalValue.value + '"' +
-      (literalValue.datatype &&
+    case 'NamedNode': return <any> term.value;
+    case 'BlankNode': return <any> (`_:${term.value}`);
+    case 'Literal': {
+      const literalValue: RDF.Literal = term;
+      return <any> (`"${literalValue.value}"${
+      literalValue.datatype &&
       literalValue.datatype.value !== 'http://www.w3.org/2001/XMLSchema#string' &&
       literalValue.datatype.value !== 'http://www.w3.org/1999/02/22-rdf-syntax-ns#langString' &&
-      literalValue.datatype.value !== 'http://www.w3.org/1999/02/22-rdf-syntax-ns#dirLangString'?
-        '^^' + literalValue.datatype.value : '') +
-      (literalValue.language ? '@' + literalValue.language : '') +
-      (literalValue.direction ? '--' + literalValue.direction : ''));
-  case 'Quad': return <any> `<<${termToString(term.subject)} ${termToString(term.predicate)} ${termToString(term.object)}${term.graph.termType === 'DefaultGraph' ? '' : ' ' + termToString(term.graph)}>>`;
-  case 'Variable': return <any> ('?' + term.value);
-  case 'DefaultGraph': return <any> term.value;
+      literalValue.datatype.value !== 'http://www.w3.org/1999/02/22-rdf-syntax-ns#dirLangString' ?
+        `^^${literalValue.datatype.value}` :
+''
+      }${literalValue.language ? `@${literalValue.language}` : ''
+      }${literalValue.direction ? `--${literalValue.direction}` : ''}`);
+    }
+    case 'Quad': return <any> `<<${termToString(term.subject)} ${termToString(term.predicate)} ${termToString(term.object)}${term.graph.termType === 'DefaultGraph' ? '' : ` ${termToString(term.graph)}`}>>`;
+    case 'Variable': return <any> (`?${term.value}`);
+    case 'DefaultGraph': return <any> term.value;
   }
+  /* eslint-enable ts/no-unsafe-return */
 }
 
 /**
@@ -51,9 +55,9 @@ export function termToString<T extends RDF.Term | undefined | null>(term: T): T 
  * @return {string} The literal value inside the '"'.
  */
 export function getLiteralValue(literalValue: string): string {
-  const match = /^"([^]*)"/.exec(literalValue);
+  const match = /^"([^]*)"/u.exec(literalValue);
   if (!match) {
-    throw new Error(literalValue + ' is not a literal');
+    throw new Error(`${literalValue} is not a literal`);
   }
   return match[1];
 }
@@ -64,12 +68,13 @@ export function getLiteralValue(literalValue: string): string {
  * @return {string} The datatype of the literal.
  */
 export function getLiteralType(literalValue: string): string {
-  const match = /^"[^]*"(?:\^\^([^"]+)|(@)[^@"]+)?$/.exec(literalValue);
+  const match = /^"[^]*"(?:\^\^([^"]+)|(@)[^"@]+)?$/u.exec(literalValue);
   if (!match) {
-    throw new Error(literalValue + ' is not a literal');
+    throw new Error(`${literalValue} is not a literal`);
   }
-  return match[1] || (match[2]
-    ? 'http://www.w3.org/1999/02/22-rdf-syntax-ns#langString' : 'http://www.w3.org/2001/XMLSchema#string');
+  return match[1] || (match[2] ?
+    'http://www.w3.org/1999/02/22-rdf-syntax-ns#langString' :
+    'http://www.w3.org/2001/XMLSchema#string');
 }
 
 /**
@@ -78,9 +83,9 @@ export function getLiteralType(literalValue: string): string {
  * @return {string} The language of the literal.
  */
 export function getLiteralLanguage(literalValue: string): string {
-  const match = /^"[^]*"(?:@([^@"]+)|\^\^[^"]+)?$/.exec(literalValue);
+  const match = /^"[^]*"(?:@([^"@]+)|\^\^[^"]+)?$/u.exec(literalValue);
   if (!match) {
-    throw new Error(literalValue + ' is not a literal');
+    throw new Error(`${literalValue} is not a literal`);
   }
   if (match[1]) {
     let ret = match[1].toLowerCase();
@@ -108,7 +113,7 @@ export function getLiteralDirection(literalValue: string): 'ltr' | 'rtl' | '' {
     if (direction === 'ltr' || direction === 'rtl') {
       return direction;
     }
-    throw new Error(literalValue + ' is not a literal with a valid direction');
+    throw new Error(`${literalValue} is not a literal with a valid direction`);
   }
   return '';
 }
@@ -120,82 +125,86 @@ export function getLiteralDirection(literalValue: string): 'ltr' | 'rtl' | '' {
  * @return {RDF.Term} An RDF-JS term.
  */
 export function stringToTerm(value: string | undefined, dataFactory?: RDF.DataFactory<RDF.BaseQuad>): RDF.Term {
-  dataFactory = dataFactory || FACTORY;
-  if (!value || !value.length) {
+  dataFactory = dataFactory ?? FACTORY;
+  if (!value || value.length === 0) {
     return dataFactory.defaultGraph();
   }
   switch (value[0]) {
-  case '_': return dataFactory.blankNode(value.substr(2));
-  case '?':
-    if (!dataFactory.variable) {
-      throw new Error(`Missing 'variable()' method on the given DataFactory`);
+    case '_': return dataFactory.blankNode(value.slice(2));
+    case '?':
+      if (!dataFactory.variable) {
+        throw new Error(`Missing 'variable()' method on the given DataFactory`);
+      }
+      return dataFactory.variable(value.slice(1));
+    case '"': {
+      const language: string = getLiteralLanguage(value);
+      const direction = getLiteralDirection(value);
+      const type: RDF.NamedNode = dataFactory.namedNode(getLiteralType(value));
+      return dataFactory.literal(getLiteralValue(value), language ? { language, direction } : type);
     }
-    return dataFactory.variable(value.substr(1));
-  case '"':
-    const language: string = getLiteralLanguage(value);
-    const direction = getLiteralDirection(value);
-    const type: RDF.NamedNode = dataFactory.namedNode(getLiteralType(value));
-    return dataFactory.literal(getLiteralValue(value), language ? { language, direction } : type);
-  case '<':
-  default:
-    if (value[0] === '<' && value.length > 4 && value[1] === '<' && value[value.length - 1] === '>' && value[value.length - 2] === '>') {
+    case '<':
+    default:
+      if (value.startsWith('<') && value.length > 4 &&
+        value[1] === '<' && value.at(-1) === '>' && value.at(-2) === '>') {
       // Iterate character-by-character to detect spaces that are *not* wrapped in <<>>
-      const terms = value.slice(2, -2).trim();
-      let stringTerms: string[] = [];
-      let ignoreTags: number = 0;
-      let lastIndex = 0;
-      let inQuote = false;
-      for (let i = 0; i < terms.length; i++) {
-        const char = terms[i];
-        if (char === '<') ignoreTags++;
-        if (char === '>') {
-          if (ignoreTags === 0) {
-            throw new Error('Found closing tag without opening tag in ' + value);
-          } else {
-            ignoreTags--
+        const terms = value.slice(2, -2).trim();
+        let stringTerms: string[] = [];
+        let ignoreTags = 0;
+        let lastIndex = 0;
+        let inQuote = false;
+        for (let i = 0; i < terms.length; i++) {
+          const char = terms[i];
+          if (char === '<') {
+            ignoreTags++;
           }
-        }
-        if (char === '"') {
-          let escaped = false
-          let j = i;
-          while (j-- > 0 && terms[j] === '\\') {
-            escaped = !escaped;
+          if (char === '>') {
+            if (ignoreTags === 0) {
+              throw new Error(`Found closing tag without opening tag in ${value}`);
+            } else {
+              ignoreTags--;
+            }
           }
-          if (!escaped) {
+          if (char === '"') {
+            let escaped = false;
+            let j = i;
+            while (j-- > 0 && terms[j] === '\\') {
+              escaped = !escaped;
+            }
+            if (!escaped) {
             // We have reached an unescaped quote
-            inQuote = !inQuote;
+              inQuote = !inQuote;
+            }
+          }
+          if (char === ' ' && !inQuote && ignoreTags === 0) {
+            stringTerms.push(terms.slice(lastIndex, i));
+
+            while (terms[i + 1] === ' ') {
+              i += 1;
+            }
+
+            lastIndex = i + 1;
           }
         }
-        if (char === ' ' && !inQuote && ignoreTags === 0) {
-          stringTerms.push(terms.slice(lastIndex, i));
-
-          while (terms[i + 1] === ' ') {
-            i += 1;
-          }
-
-          lastIndex = i + 1;
+        if (ignoreTags !== 0) {
+          throw new Error(`Found opening tag without closing tag in ${value}`);
         }
-      }
-      if (ignoreTags !== 0) {
-        throw new Error('Found opening tag without closing tag in ' + value);
-      }
-      stringTerms.push(terms.slice(lastIndex, terms.length));
+        stringTerms.push(terms.slice(lastIndex, terms.length));
 
-      // We require 3 or 4 components
-      if (stringTerms.length !== 3 && stringTerms.length !== 4) {
-        throw new Error('Nested quad syntax error ' + value);
+        // We require 3 or 4 components
+        if (stringTerms.length !== 3 && stringTerms.length !== 4) {
+          throw new Error(`Nested quad syntax error ${value}`);
+        }
+
+        stringTerms = stringTerms.map(term => term.startsWith('<') && !term.includes(' ') ? term.slice(1, -1) : term);
+
+        return dataFactory.quad(
+          stringToTerm(stringTerms[0]),
+          stringToTerm(stringTerms[1]),
+          stringToTerm(stringTerms[2]),
+          stringTerms[3] ? stringToTerm(stringTerms[3]) : undefined,
+        );
       }
-
-      stringTerms = stringTerms.map(term => term.startsWith('<') && !term.includes(' ') ? term.slice(1, -1) : term)
-
-      return dataFactory.quad(
-        stringToTerm(stringTerms[0]),
-        stringToTerm(stringTerms[1]),
-        stringToTerm(stringTerms[2]),
-        stringTerms[3] ? stringToTerm(stringTerms[3]) : undefined,
-      );
-    }
-    return dataFactory.namedNode(value);
+      return dataFactory.namedNode(value);
   }
 }
 
@@ -203,17 +212,15 @@ export function stringToTerm(value: string | undefined, dataFactory?: RDF.DataFa
  * Convert an RDFJS quad to a string-based quad representation.
  * @param {Quad} q An RDFJS quad.
  * @return {IStringQuad} A hash with string-based quad terms.
- * @template Q The type of quad, defaults to RDF.Quad.
+ * @template TQ The type of quad, defaults to RDF.Quad.
  */
-export function quadToStringQuad<Q extends RDF.BaseQuad = RDF.Quad>(q: Q): IStringQuad {
-  // tslint:disable:object-literal-sort-keys
+export function quadToStringQuad<TQ extends RDF.BaseQuad = RDF.Quad>(q: TQ): IStringQuad {
   return {
     subject: termToString(q.subject),
     predicate: termToString(q.predicate),
     object: termToString(q.object),
     graph: termToString(q.graph),
   };
-  // tslint:enable:object-literal-sort-keys
 }
 
 /**
@@ -221,11 +228,13 @@ export function quadToStringQuad<Q extends RDF.BaseQuad = RDF.Quad>(q: Q): IStri
  * @param {IStringQuad} stringQuad A hash with string-based quad terms.
  * @param {RDF.DataFactory} dataFactory An optional datafactory to create terms with.
  * @return {Q} An RDFJS quad.
- * @template Q The type of quad, defaults to RDF.Quad.
+ * @template TQ The type of quad, defaults to RDF.Quad.
  */
-export function stringQuadToQuad<Q extends RDF.BaseQuad = RDF.Quad>(stringQuad: IStringQuad,
-                                                                    dataFactory?: RDF.DataFactory<Q>): Q {
-  dataFactory = <RDF.DataFactory<Q>> dataFactory || FACTORY;
+export function stringQuadToQuad<TQ extends RDF.BaseQuad = RDF.Quad>(
+  stringQuad: IStringQuad,
+  dataFactory?: RDF.DataFactory<TQ>,
+): TQ {
+  dataFactory = <RDF.DataFactory<TQ>> dataFactory || FACTORY;
   return dataFactory.quad(
     stringToTerm(stringQuad.subject, dataFactory),
     stringToTerm(stringQuad.predicate, dataFactory),
